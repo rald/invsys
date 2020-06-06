@@ -94,22 +94,21 @@ void List_Set(List **head,int n,void *data,void (*Data_Free)(void*)) {
 	}
 }
 
-List *List_RemoveAt(List **head,int n) {
+void List_RemoveAt(List **head,int n,void (Data_Free)(void*)) {
 	List *before=List_Get(*head,n-1);
 	if(before) {
 		List *item=before->next;
 		before->next=item->next;
 		item->next=NULL;
-		return item;
+		List_Free(&item,Data_Free);
 	} else {
 		List *item=*head;
 		if(item) {
 			(*head)=(*head)->next;
 			item->next=NULL;
-			return item;
+			List_Free(&item,Data_Free);
 		}
 	}
-	return NULL;
 }
 
 void List_PrintItems(List *head) {
@@ -245,7 +244,7 @@ void removeItem() {
 	}
 
 	if(iter) {
-		List_RemoveAt(&head,i);
+		List_RemoveAt(&head,i,Item_Free);
 		printf("Item removed.\n");
 	} else {
 		printf("Item not found.\n");
